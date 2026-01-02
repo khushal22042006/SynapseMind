@@ -7,7 +7,8 @@
     "activeTab",
     "contextMenus",
     "storage",
-    "scripting"
+    "notifications",   
+    "scripting"  
   ],
   "host_permissions": [
     "<all_urls>"
@@ -19,7 +20,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/content/content-script.js"],
+      "js": ["src/content/content.js"],
       "css": ["src/content/content-styles.css"]
     }
   ],
@@ -36,5 +37,11 @@
     "16": "public/icons/icon16.png",
     "48": "public/icons/icon48.png",
     "128": "public/icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

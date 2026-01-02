@@ -1,23 +1,24 @@
-
 {
   "name": "synapsemind-extension",
   "version": "1.0.0",
   "description": "Chrome extension for instant summaries and mind maps",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+  "type": "module",
+   "scripts": {
+    "build": "vite build && xcopy /y manifest.json dist\\ && xcopy /y src\\content\\*.css dist\\src\\content\\ && xcopy /y public dist\\public\\ /E",
     "preview": "vite preview"
   },
   "dependencies": {
+    "lucide-react": "^0.309.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.253",
-    "vite": "^4.5.0",
-    "@vitejs/plugin-react": "^4.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.16",
+    "copyfiles": "^2.4.1",
+    "fs-extra": "^11.3.3",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5"
+    "tailwindcss": "^3.3.5",
+    "vite": "^4.4.5"
   }
 }
