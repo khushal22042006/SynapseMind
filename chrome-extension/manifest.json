@@ -14,14 +14,17 @@
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "src/background/service-worker.js",
+    "service_worker": "src/background/service_worker.js",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["src/content/content.js"],
-      "css": ["src/content/content-styles.css"]
+      "css": ["src/content/content-styles.css"],
+      "run_at": "document_end",
+      "all_frames": false,
+      "match_about_blank": false
     }
   ],
   "action": {
