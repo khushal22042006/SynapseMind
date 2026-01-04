@@ -1,4 +1,4 @@
-# Python
+# ==================== Python ====================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,7 +6,7 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
+dist/                   # This ignores ALL dist folders
 downloads/
 eggs/
 .eggs/
@@ -21,6 +21,11 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.python-version
 
 # Virtual Environments
 venv/
@@ -29,24 +34,57 @@ env/
 ENV/
 env.bak/
 venv.bak/
+.pipenv/
+.poetry/
+pyvenv.cfg
 
-# Backend specific
-backend/.env
-backend/__pycache__/
-
-# Frontend specific
-chrome-extension/node_modules/
-
-chrome-extension/.env
-chrome-extension/.env.local
-chrome-extension/.env.development.local
-chrome-extension/.env.test.local
-chrome-extension/.env.production.local
+# ==================== Node.js/JavaScript ====================
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.lighthouseci/
+.webpack/
+.cache/
+.parcel-cache/
 
-# IDE
+# Build directories (EXCEPT chrome-extension/dist)
+dist/                   # Still ignore generic dist
+build/
+out/
+.next/
+.nuxt/
+.gatsby/
+.output/
+.chrome/
+extension-build/
+!chrome-extension/dist/ # DON'T ignore this specific dist folder
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+
+# ==================== Environment Variables ====================
+# Backend
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Frontend
+chrome-extension/.env
+chrome-extension/.env.*
+!chrome-extension/.env.example
+
+# Root
+.env
+.env.*
+!.env.example
+
+# ==================== IDE & Editor ====================
 .vscode/
 .idea/
 *.swp
@@ -54,3 +92,43 @@ yarn-error.log*
 *~
 .DS_Store
 Thumbs.db
+*.sublime-*
+
+# ==================== OS Generated ====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+[Tt]humbs.db
+desktop.ini
+
+# ==================== Project Specific ====================
+# Based on your file structure
+data/
+static/
+public/
+*.db
+*.sqlite
+*.sqlite3
+
+# Chrome extension specific (EXCEPT dist)
+chrome-extension/*.crx
+chrome-extension/*.pem
+chrome-extension/dist/  # Redundant but clear - NOT ignored due to ! above
+
+# ==================== Temporary Files ====================
+*.tmp
+*.temp
+*.bak
+~*
+
+# ==================== Documentation ====================
+_site/
+.sass-cache/
+.jekyll-cache/
+
+# ==================== Testing ====================
+test-results/
+.vscode-test/
