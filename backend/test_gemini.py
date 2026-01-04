@@ -1,7 +1,7 @@
 import google.generativeai as genai
 
 # YOUR API KEY HERE
-YOUR_API_KEY = "AIzaSyBJfQixWZ3Wix72BQja3dJKiWAqjMFcu5g"
+YOUR_API_KEY = "AIzaSyBc0fXTWJSjiTpAnV2x2PzVULz18fOC0jk"
 
 def test_gemini_correct():
     """Test with YOUR available models"""

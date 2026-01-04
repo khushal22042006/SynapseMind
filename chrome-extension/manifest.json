@@ -14,7 +14,7 @@
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "src/background/service_worker.js",
+    "service_worker": "src/background/background.js",
     "type": "module"
   },
   "content_scripts": [
@@ -22,9 +22,9 @@
       "matches": ["<all_urls>"],
       "js": ["src/content/content.js"],
       "css": ["src/content/content-styles.css"],
-      "run_at": "document_end",
-      "all_frames": false,
-      "match_about_blank": false
+      "run_at": "document_end",  
+      "all_frames": true,        
+      "match_about_blank": true  
     }
   ],
   "action": {

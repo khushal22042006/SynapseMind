@@ -36,7 +36,7 @@ backend/__pycache__/
 
 # Frontend specific
 chrome-extension/node_modules/
-chrome-extension/dist/
+
 chrome-extension/.env
 chrome-extension/.env.local
 chrome-extension/.env.development.local
