@@ -223,7 +223,14 @@ async def cached_summary(request: SummaryRequest):
 
 if __name__ == "__main__":
     import uvicorn
+    import os
+
+    port = int(os.getenv("PORT", 8000))
+
+
     print("🚀 Starting SynapseMind Backend API...")
-    print(f"📡 API Documentation: http://localhost:8000/docs")
-    print(f"🌐 Health check: http://localhost:8000/health")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    print(f"📡 Port: {port}")
+    print(f"📚 API Documentation: http://localhost:{port}/docs")
+    print(f"🏥 Health check: http://localhost:{port}/health")
+    
+    uvicorn.run(app, host="0.0.0.0", port=port)

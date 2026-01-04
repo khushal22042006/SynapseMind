@@ -137,40 +137,268 @@ class GeminiService:
                  return f"Academic analysis ({word_count} words):\n- Topic: {self._extract_main_topic(text)}\n- Key concepts: {self._extract_key_concepts(text, 4)}\n- Methodology: Analytical review\n- Implications: Theoretical significance"
             
 
+        
             
-    
+        
     def generate_mindmap(self, text: str) -> Dict[str, Any]:
         """
-        Generate mind map
+        Generate mind map with hierarchical structure from text
         """
         try:
             self._check_rate_limit()
             
-            text = self._clean_text(text, max_length=2000)
+            # Clean text but keep more context
+            text = self._clean_text(text)
             
-            prompt = f"""Extract main concepts from this text and return as a simple list:
+            prompt = f"""Analyze this text and extract key concepts to create a hierarchical mind map.
             
-            Text: {text}
+            TEXT:
+            {text}
             
-            Concepts:"""
+            Extract:
+            1. MAIN_CENTRAL_TOPIC: [The central theme]
+            2. PRIMARY_BRANCHES: [3-5 main categories or subtopics]
+            3. For each primary branch, list 2-3 key points or sub-branches
+            4. Show connections between related concepts
+            
+            Format your response as:
+            CENTRAL_TOPIC: [topic name]
+            
+            BRANCHES:
+            1. [Branch 1 Name]
+            • [Subpoint 1]
+            • [Subpoint 2]
+            
+            2. [Branch 2 Name]
+            • [Subpoint 1]
+            • [Subpoint 2]
+            
+            RELATIONSHIPS:
+            - [Concept A] is related to [Concept B] because...
+            - [Concept B] connects to [Concept C] for...
+            
+            Keep it structured but concise."""
             
             response = self.model.generate_content(
                 prompt,
-                generation_config={"max_output_tokens": 150, "temperature": 0.2}
+                generation_config={
+                    "max_output_tokens": 2000,  # Increased for hierarchy
+                    "temperature": 0.3,
+                    "top_p": 0.9,
+                    "top_k": 40
+                }
             )
             
-            # Parse concepts
-            concepts = self._parse_concepts(response.text)
+            # Parse the structured response
+            mindmap_data = self._parse_structured_mindmap(response.text)
             
-            # Build mind map
-            return self._build_mindmap(concepts)
+            # Build nodes and connections
+            return self._build_mindmap_structure(mindmap_data)
             
         except Exception as e:
-            print(f"❌ Mindmap error: {e}")
+            print(f"❌ Mindmap generation error: {e}")
             return self._create_fallback_mindmap(text)
-        
 
-    
+    def _parse_structured_mindmap(self, response_text: str) -> Dict[str, Any]:
+        """
+        Parse structured mind map data from Gemini response
+        """
+        data = {
+            "central_topic": "",
+            "branches": [],
+            "relationships": []
+        }
+        
+        lines = response_text.strip().split('\n')
+        current_section = None
+        current_branch = None
+        
+        for line in lines:
+            line = line.strip()
+            
+            if not line:
+                continue
+                
+            # Identify sections
+            if line.startswith("CENTRAL_TOPIC:"):
+                data["central_topic"] = line.replace("CENTRAL_TOPIC:", "").strip()
+                current_section = "central"
+                
+            elif line.startswith("BRANCHES:"):
+                current_section = "branches"
+                
+            elif line.startswith("RELATIONSHIPS:"):
+                current_section = "relationships"
+                
+            # Parse based on current section
+            elif current_section == "branches":
+                # Check for branch number (1., 2., etc.)
+                if line and line[0].isdigit() and '.' in line and len(line.split('.')[0].strip()) == 1:
+                    branch_name = line.split('.', 1)[1].strip()
+                    current_branch = {
+                        "name": branch_name,
+                        "points": []
+                    }
+                    data["branches"].append(current_branch)
+                    
+                elif line.startswith("•") or line.startswith("-"):
+                    if current_branch:
+                        point = line[1:].strip()
+                        current_branch["points"].append(point)
+                        
+            elif current_section == "relationships":
+                if line.startswith("-"):
+                    rel_text = line[1:].strip()
+                    data["relationships"].append(rel_text)
+        
+        return data
+
+    def _build_mindmap_structure(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Build mind map nodes and connections from parsed data
+        """
+        nodes = []
+        edges = []
+        node_id_counter = 0
+        
+        # Add central topic node
+        if data["central_topic"]:
+            central_id = f"node_{node_id_counter}"
+            nodes.append({
+                "id": central_id,
+                "label": data["central_topic"],
+                "type": "central",
+                "size": 30
+            })
+            node_id_counter += 1
+        
+        # Add branch nodes
+        branch_nodes = []
+        for i, branch in enumerate(data["branches"]):
+            branch_id = f"node_{node_id_counter}"
+            nodes.append({
+                "id": branch_id,
+                "label": branch["name"],
+                "type": "branch",
+                "size": 24
+            })
+            branch_nodes.append((branch_id, branch))
+            
+            # Connect branch to central topic
+            if central_id:
+                edges.append({
+                    "id": f"edge_{len(edges)}",
+                    "source": central_id,
+                    "target": branch_id,
+                    "label": "contains"
+                })
+            
+            node_id_counter += 1
+            
+            # Add subpoints
+            for j, point in enumerate(branch.get("points", [])):
+                point_id = f"node_{node_id_counter}"
+                nodes.append({
+                    "id": point_id,
+                    "label": point,
+                    "type": "detail",
+                    "size": 18
+                })
+                
+                # Connect point to branch
+                edges.append({
+                    "id": f"edge_{len(edges)}",
+                    "source": branch_id,
+                    "target": point_id,
+                    "label": "includes"
+                })
+                
+                node_id_counter += 1
+        
+        # Add relationship-based connections (if any)
+        for rel in data.get("relationships", []):
+            # Simple relationship extraction - you could enhance this
+            if " is related to " in rel:
+                parts = rel.split(" is related to ")
+                if len(parts) == 2:
+                    source_concept = parts[0].strip()
+                    target_part = parts[1].split(" because")[0].strip()
+                    
+                    # Find matching nodes (simplified - could be enhanced)
+                    for node in nodes:
+                        if source_concept.lower() in node["label"].lower():
+                            source_id = node["id"]
+                            for target_node in nodes:
+                                if target_part.lower() in target_node["label"].lower() and target_node["id"] != source_id:
+                                    edges.append({
+                                        "id": f"edge_{len(edges)}",
+                                        "source": source_id,
+                                        "target": target_node["id"],
+                                        "label": "related to",
+                                        "dashed": True
+                                    })
+                                    break
+                            break
+        
+        return {
+            "nodes": nodes,
+            "edges": edges,
+            "total_nodes": len(nodes),
+            "total_edges": len(edges),
+            "central_topic": data.get("central_topic", ""),
+            "status": "success"
+        }
+
+    def _create_fallback_mindmap(self, text: str) -> Dict[str, Any]:
+        """
+        Create a simple fallback mind map when generation fails
+        """
+        # Extract first sentence as central topic
+        first_sentence = text.split('.')[0][:100]
+        
+        nodes = [
+            {
+                "id": "node_0",
+                "label": first_sentence if first_sentence else "Main Topic",
+                "type": "central",
+                "size": 30
+            }
+        ]
+        
+        # Add a few basic branches based on text keywords
+        keywords = ["equation", "assumptions", "applications", "variables"]
+        for i, keyword in enumerate(keywords[:3]):
+            if keyword in text.lower():
+                nodes.append({
+                    "id": f"node_{i+1}",
+                    "label": keyword.capitalize(),
+                    "type": "branch",
+                    "size": 24
+                })
+        
+        # Simple connections
+        edges = []
+        for i in range(1, len(nodes)):
+            edges.append({
+                "id": f"edge_{i-1}",
+                "source": "node_0",
+                "target": nodes[i]["id"]
+            })
+        
+        return {
+            "nodes": nodes,
+            "edges": edges,
+            "total_nodes": len(nodes),
+            "total_edges": len(edges),
+            "central_topic": first_sentence,
+            "status": "fallback"
+        }  
+
+
+
+
+
+
     def _clean_text(self, text: str, max_tokens: int = 8000) -> str:
       """
       Clean and truncate text based on rough token estimation

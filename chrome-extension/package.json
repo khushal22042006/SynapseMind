@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "description": "Chrome extension for instant summaries and mind maps",
   "type": "module",
-   "scripts": {
+  "scripts": {
     "build": "vite build && xcopy /y manifest.json dist\\ && xcopy /y src\\content\\*.css dist\\src\\content\\ && xcopy /y public dist\\public\\ /E",
     "preview": "vite preview"
   },
   "dependencies": {
     "lucide-react": "^0.309.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "reactflow": "^11.11.4"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.3",
