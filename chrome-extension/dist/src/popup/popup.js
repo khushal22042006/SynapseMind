@@ -8601,11 +8601,17 @@ const HistoryView = () => {
                     " Copy"
                   ]
                 }),
-                hasSummary && item.text && item.text.length > 20 && /* @__PURE__ */ jsxRuntimeExports.jsx("button", {
-                  onClick: () => copyToClipboard(item.text),
-                  className: "text-xs text-slate-400 hover:text-slate-300",
-                  children: "Copy Original"
-                })
+
+
+                
+                // hasSummary && item.text && item.text.length > 20 && /* @__PURE__ */ jsxRuntimeExports.jsx("button", {
+                //   onClick: () => copyToClipboard(item.text),
+                //   className: "text-xs text-slate-400 hover:text-slate-300",
+                //   children: "Copy Original"
+                // })
+                 
+
+
               ] })
             ] })
           ] }, index);
@@ -8674,18 +8680,22 @@ const HistoryView = () => {
                   " chars"
                 ] })
               ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("button", {
-                onClick: () => {
-                  // Re-generate or visualize this mind map
-                  console.log("Visualize mind map:", item);
-                  // You could add functionality here to re-generate or show in detail
-                },
-                className: "text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1",
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(Network, { size: 12 }),
-                  " Visualize"
-                ]
-              })
+
+              
+              // /* @__PURE__ */ jsxRuntimeExports.jsxs("button", {
+              //   onClick: () => {
+              //     // Re-generate or visualize this mind map
+              //     console.log("Visualize mind map:", item);
+              //     // You could add functionality here to re-generate or show in detail
+              //   },
+              //   className: "text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1",
+              //   children: [
+              //     /* @__PURE__ */ jsxRuntimeExports.jsx(Network, { size: 12 }),
+              //     " Visualize"
+              //   ]
+              // })
+            
+
             ] })
           ] }, index);
         }),
@@ -9269,14 +9279,18 @@ const handleCopy = (text) => {
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-2", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-medium text-slate-300", children: "Selected Text" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "button",
-          {
-            onClick: loadSelectedText,
-            className: "text-xs px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded transition-colors",
-            children: "🔄 Refresh"
-          }
-        ),
+        
+        
+        // /* @__PURE__ */ jsxRuntimeExports.jsx(
+        //   "button",
+        //   {
+        //     onClick: loadSelectedText,
+        //     className: "text-xs px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded transition-colors",
+        //     children: "🔄 Refresh"
+        //   }
+        // ),
+
+
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "button",
           {
